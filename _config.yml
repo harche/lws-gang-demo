@@ -8,4 +8,5 @@ minima:
     - platform: github
       user_url: https://github.com/harche
 plugins:
+  - jekyll-sitemap
   - jekyll-feed
