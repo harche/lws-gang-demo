@@ -75,8 +75,13 @@ gang-constrained-0-d646fdf98   Inqueue   4           <none>
 ```
 
 ```bash
-$ kubectl get events --field-selector involvedObject.kind=PodGroup -n gang-demo | tail -n3
-Warning   Unschedulable   4/4 tasks in gang unschedulable: pod group is not ready...
+$ kubectl get events --field-selector involvedObject.kind=PodGroup -n gang-demo
+TYPE      REASON          MESSAGE
+Warning   Unschedulable   4/4 tasks in gang unschedulable: pod group is not ready, 4 Pending, 4 minAvailable;
+                             Pending: 1 Unschedulable, 3 Schedulable.
+                             Origin reason is gang-constrained-0-3: 0/4 nodes are unavailable:
+                             1 Insufficient cpu, 1 node(s) had untolerated taint {node-role.kubernetes.io/control-plane: },
+                             2 node(s) had untolerated taint {test: blocked}.
 ```
 
 When you free one of the tainted nodes, the entire gang launches together:
