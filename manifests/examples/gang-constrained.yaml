@@ -1,0 +1,38 @@
+apiVersion: leaderworkerset.x-k8s.io/v1
+kind: LeaderWorkerSet
+metadata:
+  name: gang-constrained
+  namespace: gang-demo
+spec:
+  replicas: 1
+  leaderWorkerTemplate:
+    size: 4  # 1 leader + 3 workers = 4 pods total
+    restartPolicy: RecreateGroupOnPodRestart
+    leaderTemplate:
+      metadata:
+        labels:
+          role: leader
+      spec:
+        schedulerName: volcano  # Gang scheduling enabled
+        containers:
+        - name: leader
+          image: nginx:latest
+          resources:
+            requests:
+              cpu: "4"  # High CPU to limit pods per node
+              memory: "1Gi"
+          command: ["sleep", "3600"]
+    workerTemplate:
+      metadata:
+        labels:
+          role: worker
+      spec:
+        schedulerName: volcano  # Gang scheduling enabled
+        containers:
+        - name: worker
+          image: nginx:latest
+          resources:
+            requests:
+              cpu: "4"  # High CPU to limit pods per node
+              memory: "1Gi"
+          command: ["sleep", "3600"]
