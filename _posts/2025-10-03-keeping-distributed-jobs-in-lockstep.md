@@ -122,7 +122,16 @@ Takeaway: gang scheduling isn’t a luxury — it’s the difference between a h
 
 - **LWS Responsibilities** (`docs/architecture.md`): create leader/worker pods, calculate `minMember` and `minResources`, and generate the matching PodGroup.
 - **Volcano Responsibilities**: watch PodGroups, decide when the gang has enough room, bind the entire set, and update PodGroup status.
-- **Required manifests**: every pod template needs `schedulerName: volcano` and explicit resource requests so `minResources` is meaningful. The controller config (`kubectl patch configmap lws-manager-config ...`) is what tells LWS to integrate with Volcano at all.
+- **Required manifests**: every pod template needs `schedulerName: volcano` and explicit resource requests so `minResources` is meaningful.
+- **Controller config**: patch `lws-manager-config` so LWS hands PodGroup data to Volcano:
+
+```bash
+$ kubectl patch configmap lws-manager-config -n lws-system --type merge -p '{
+  "data": {
+    "controller_manager_config.yaml": "apiVersion: config.lws.x-k8s.io/v1alpha1\nkind: Configuration\nleaderElection:\n  leaderElect: true\ninternalCertManagement:\n  enable: true\ngangSchedulingManagement:\n  schedulerProvider: volcano\n"
+  }
+}'
+```
 
 Once configured, LWS emits PodGroups automatically; Volcano enforces the gang semantics. The division of labour mirrors Deployments creating Pods and kube-scheduler placing them — different components playing to their strengths.
 
@@ -135,7 +144,7 @@ Once configured, LWS emits PodGroups automatically; Volcano enforces the gang se
 3. `./scripts/verify-gang-scheduling.sh` (grabs PodGroup fields and events for receipts)
 4. Optional cleanup: `./scripts/cleanup.sh`
 
-You can also poke through the live resources with `kubectl get podgroups -n gang-demo` or `kubectl describe podgroup ...` to see the Volcano status transitions (`Inqueue → Running`).
+You can also poke through the live resources with `kubectl get podgroups -n gang-demo` or `kubectl describe podgroup gang-constrained-0-d646fdf98 -n gang-demo` to watch Volcano flip PodGroups from `Inqueue` to `Running`.
 
 ---
 
