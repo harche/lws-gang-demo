@@ -3,7 +3,10 @@ layout: post
 title: "Keeping Distributed Jobs in Lockstep"
 description: "How LWS and Volcano enforce all-or-nothing scheduling"
 date: 2025-10-03
+author: Harshad Patil
 ---
+
+*Author: [Harshad Patil](https://github.com/harche)*
 
 Distributed workloads love to act like a synchronized swim team: either everyone dives in together or someone belly flops alone. **Gang scheduling** is how you keep the choreography perfect. Using [LeaderWorkerSet (LWS)](https://github.com/kubernetes-sigs/lws) together with the [Volcano scheduler](https://github.com/volcano-sh/volcano), we can see exactly how that works across a few real scenarios. The manifests and scripts in this companion sandbox — [`lws-gang-demo`](https://github.com/harche/lws-gang-demo) — simply give us a convenient stage.
 

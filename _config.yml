@@ -1,5 +1,11 @@
 title: "LWS Gang Scheduling"
 description: "Walkthrough of all-or-nothing scheduling with LWS and Volcano"
 theme: minima
+author: Harshad Patil
+github_username: harche
+minima:
+  social_links:
+    - platform: github
+      user_url: https://github.com/harche
 plugins:
   - jekyll-feed
