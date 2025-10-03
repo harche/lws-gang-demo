@@ -71,7 +71,7 @@ gang-constrained-0-3   0/1     Pending   0          24s
 ```bash
 $ kubectl get podgroups -n gang-demo
 NAME                           STATUS    MINMEMBER   RUNNINGS
-gang-constrained-0-d646fdf98   Inqueue   4           <none>
+<pod-group-name>              Inqueue   4           <none>
 ```
 
 ```bash
@@ -90,7 +90,7 @@ When you free one of the tainted nodes, the entire gang launches together:
 $ kubectl taint nodes llm-d-demo-worker2 test=blocked:NoSchedule-
 $ kubectl get podgroups -n gang-demo
 NAME                           STATUS    MINMEMBER   RUNNINGS
-gang-constrained-0-d646fdf98   Running   4           4
+<pod-group-name>              Running   4           4
 ```
 
 Takeaway: gang scheduling prevents the classic deadlock where one leader runs, waits forever for its workers, and hogs resources along the way.
@@ -118,25 +118,6 @@ Takeaway: gang scheduling isn’t a luxury — it’s the difference between a h
 
 ---
 
-## Under the Hood – How LWS and Volcano Coordinate
-
-- **LWS Responsibilities** (`docs/architecture.md`): create leader/worker pods, calculate `minMember` and `minResources`, and generate the matching PodGroup.
-- **Volcano Responsibilities**: watch PodGroups, decide when the gang has enough room, bind the entire set, and update PodGroup status.
-- **Required manifests**: every pod template needs `schedulerName: volcano` and explicit resource requests so `minResources` is meaningful.
-- **Controller config**: patch `lws-manager-config` so LWS enables `gangSchedulingManagement.schedulerProvider: volcano` and creates Volcano-compatible PodGroups:
-
-```bash
-$ kubectl patch configmap lws-manager-config -n lws-system --type merge -p '{
-  "data": {
-    "controller_manager_config.yaml": "apiVersion: config.lws.x-k8s.io/v1alpha1\nkind: Configuration\nleaderElection:\n  leaderElect: true\ninternalCertManagement:\n  enable: true\ngangSchedulingManagement:\n  schedulerProvider: volcano\n"
-  }
-}'
-```
-
-Once configured, LWS emits PodGroups automatically; Volcano enforces the gang semantics. The division of labour mirrors Deployments creating Pods and kube-scheduler placing them — different components playing to their strengths.
-
----
-
 ## Try It Yourself
 
 1. `./scripts/setup-cluster.sh`
@@ -144,7 +125,7 @@ Once configured, LWS emits PodGroups automatically; Volcano enforces the gang se
 3. `./scripts/verify-gang-scheduling.sh` (grabs PodGroup fields and events for receipts)
 4. Optional cleanup: `./scripts/cleanup.sh`
 
-You can also poke through the live resources with `kubectl get podgroups -n gang-demo` or `kubectl describe podgroup gang-constrained-0-d646fdf98 -n gang-demo` to watch Volcano flip PodGroups from `Inqueue` to `Running`.
+You can also poke through the live resources with `kubectl get podgroups -n gang-demo` or `kubectl describe podgroup <pod-group-name> -n gang-demo` to watch Volcano flip PodGroups from `Inqueue` to `Running`.
 
 ---
 
