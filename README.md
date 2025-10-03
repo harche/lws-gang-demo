@@ -28,7 +28,7 @@ nodes:
 ```
 
 ```bash
-kind create cluster --name llm-d-demo --config /tmp/kind-config.yaml
+kind create cluster --name llm-d-demo --config manifests/setup/kind-config.yaml
 ```
 
 **Verification:**
@@ -143,7 +143,7 @@ spec:
 2. Apply the manifest:
 
 ```bash
-kubectl apply -f /tmp/gang-demo-lws.yaml
+kubectl apply -f manifests/examples/gang-test.yaml
 ```
 
 3. Check for PodGroup creation:
@@ -230,7 +230,7 @@ spec:
 3. Apply and check pod status:
 
 ```bash
-kubectl apply -f /tmp/gang-constrained.yaml
+kubectl apply -f manifests/examples/gang-constrained.yaml
 kubectl get pods -n gang-demo -l leaderworkerset.sigs.k8s.io/name=gang-constrained
 ```
 
@@ -375,7 +375,7 @@ spec:
 3. Apply and check pod status:
 
 ```bash
-kubectl apply -f /tmp/no-gang.yaml
+kubectl apply -f manifests/examples/no-gang.yaml
 sleep 5
 kubectl get pods -n gang-demo -l app=no-gang
 ```
@@ -517,17 +517,17 @@ Gang scheduling with LeaderWorkerSet + Volcano successfully:
 ## Appendix: Test Artifacts
 
 ### Cluster Configuration
-- **File:** `/tmp/kind-config.yaml`
+- **File:** `manifests/setup/kind-config.yaml`
 - **Cluster Name:** `llm-d-demo`
 - **Nodes:** 1 control-plane + 3 workers
 
 ### Test Manifests
-- **Gang LWS:** `/tmp/gang-demo-lws.yaml`
-- **Gang Constrained:** `/tmp/gang-constrained.yaml`
-- **No Gang Deployment:** `/tmp/no-gang.yaml`
+- **Gang LWS:** `manifests/examples/gang-test.yaml`
+- **Gang Constrained:** `manifests/examples/gang-constrained.yaml`
+- **No Gang Deployment:** `manifests/examples/no-gang.yaml`
 
 ### Verification Script
-- **File:** `/tmp/verify-gang-scheduling.sh`
+- **File:** `scripts/verify-gang-scheduling.sh`
 - **Purpose:** Independent verification of gang scheduling behavior
 
 ### Test Namespace
