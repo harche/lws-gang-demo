@@ -123,7 +123,7 @@ Takeaway: gang scheduling isn’t a luxury — it’s the difference between a h
 - **LWS Responsibilities** (`docs/architecture.md`): create leader/worker pods, calculate `minMember` and `minResources`, and generate the matching PodGroup.
 - **Volcano Responsibilities**: watch PodGroups, decide when the gang has enough room, bind the entire set, and update PodGroup status.
 - **Required manifests**: every pod template needs `schedulerName: volcano` and explicit resource requests so `minResources` is meaningful.
-- **Controller config**: patch `lws-manager-config` so LWS hands PodGroup data to Volcano:
+- **Controller config**: patch `lws-manager-config` so LWS enables `gangSchedulingManagement.schedulerProvider: volcano` and creates Volcano-compatible PodGroups:
 
 ```bash
 $ kubectl patch configmap lws-manager-config -n lws-system --type merge -p '{
