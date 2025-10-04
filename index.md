@@ -1,6 +1,9 @@
 ---
-layout: home
-title: "Gang Scheduling Notes"
+layout: page
+title: "Content Moved"
+permalink: /
 ---
 
-Welcome! The post below walks through how LeaderWorkerSet and Volcano enforce gang scheduling across real scenarios.
+The gang-scheduling write-up now lives in the consolidated blog: [https://harche.github.io/blog/](https://harche.github.io/blog/).
+
+This repository continues to host the demo manifests and scripts in the main branch.
